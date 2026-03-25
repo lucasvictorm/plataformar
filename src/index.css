@@ -1,11 +1,5 @@
 @import "tailwindcss";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 @theme {
   --color-background-main: #131a2c;
   --color-background-secondary: #0c1523;
@@ -18,4 +12,8 @@
   --color-success: #22c55e;
   --color-warning: #f59e0b;
   --color-danger: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
 }
