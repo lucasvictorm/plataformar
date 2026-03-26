@@ -1,4 +1,3 @@
-import React from "react";
 import { MoreVertical, BookOpen, Clock } from "lucide-react";
 import Default from "../../assets/default_course.png";
 import ProgressBar from "../ProgressBar";
@@ -34,7 +33,7 @@ const CourseCard = ({
   let formatedDuration = formatDuration(duration);
 
   return (
-    <div className="w-[260px] bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="w-65 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
       {/* Imagem */}
       <div className="relative h-36 bg-black">
         <img

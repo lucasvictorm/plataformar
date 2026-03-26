@@ -6,14 +6,15 @@ import MainButton from "../MainButton";
 import { AiFillHome, AiOutlineHome } from "react-icons/ai";
 import PlataformarLogo from "../../assets/plataformar.svg";
 
-function Header() {
+type Props = {
+  setScreen: () => void;
+};
+
+function Header({ setScreen }: Props) {
   return (
     <div className="bg-background-main border-b border-b-slate-700 flex justify-between relative h-14">
       <div className="text-gray-400 flex gap-6 items-center pl-6">
-        <MainButton
-          onClick={() => console.log("Home")}
-          fillIcon={<AiFillHome />}
-        >
+        <MainButton onClick={setScreen} fillIcon={<AiFillHome />}>
           <AiOutlineHome />
         </MainButton>
         <MainButton

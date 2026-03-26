@@ -2,7 +2,11 @@ import Button from "../Button";
 import CardBackground from "../CardBackground";
 import { LuFolderUp } from "react-icons/lu";
 
-function CardUpFolder() {
+type Props = {
+  setScreen: () => void;
+};
+
+function CardUpFolder({ setScreen }: Props) {
   return (
     <CardBackground className="w-130 p-4 rounded-md ">
       <div className="flex flex-col text-white items-center gap-6">
@@ -13,12 +17,7 @@ function CardUpFolder() {
         <p className="text-center">
           Arraste ou importe sua primeira pasta para organizar seu aprendizado
         </p>
-        <Button
-          title="Importar Pasta"
-          onClick={() => {
-            console.log("Importar Pasta");
-          }}
-        />
+        <Button title="Importar Pasta" onClick={setScreen} />
       </div>
     </CardBackground>
   );

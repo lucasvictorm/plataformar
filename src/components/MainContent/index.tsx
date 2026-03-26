@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import CardUpFolder from "../CardUpFolder";
 
 type Props = {
   children: ReactNode;
