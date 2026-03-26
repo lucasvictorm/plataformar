@@ -5,7 +5,7 @@ type Props = {
 };
 
 function ContainerScreen({ children }: Props) {
-  return <div className="w-screen h-screen flex flex-col">{children}</div>;
+  return <div className="w-screen min-h-screen flex flex-col">{children}</div>;
 }
 
 export default ContainerScreen;

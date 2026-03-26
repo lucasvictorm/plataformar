@@ -1,5 +1,6 @@
 export type Lesson = {
   title: string;
+  duration?: number;
   done: boolean;
 };
 

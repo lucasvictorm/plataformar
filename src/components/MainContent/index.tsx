@@ -1,7 +1,16 @@
-function MainContent() {
+import type { ReactNode } from "react";
+import CardUpFolder from "../CardUpFolder";
+
+type Props = {
+  children: ReactNode;
+};
+
+function MainContent({ children }: Props) {
   return (
-    <div className="w-full h-full bg-background-secondary">
-      Conteúdo Principal
+    <div className="flex-1 bg-background-secondary">
+      <div className="h-full w-full flex-col justify-center items-center">
+        {children}
+      </div>
     </div>
   );
 }

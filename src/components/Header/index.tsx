@@ -8,7 +8,7 @@ import PlataformarLogo from "../../assets/plataformar.svg";
 
 function Header() {
   return (
-    <div className="bg-background-main border-b border-b-slate-800 flex justify-between relative h-14">
+    <div className="bg-background-main border-b border-b-slate-700 flex justify-between relative h-14">
       <div className="text-gray-400 flex gap-6 items-center pl-6">
         <MainButton
           onClick={() => console.log("Home")}
