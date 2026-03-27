@@ -1,6 +1,7 @@
 import { MoreVertical, BookOpen, Clock } from "lucide-react";
 import Default from "../../assets/default_course.png";
-import ProgressBar from "../ProgressBar";
+import ProgressBar from "../../ui/ProgressBar";
+import Button from "../Button";
 
 type Props = {
   title: string;
@@ -33,7 +34,7 @@ const CourseCard = ({
   let formatedDuration = formatDuration(duration);
 
   return (
-    <div className="w-65 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="w-65 bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all group rounded-2xl shadow-sm overflow-hidden">
       {/* Imagem */}
       <div className="relative h-36 bg-black">
         <img
@@ -46,7 +47,7 @@ const CourseCard = ({
           <MoreVertical size={16} className="text-gray-700" />
         </button>
 
-        <h2 className="absolute bottom-3 left-3 right-3 text-white text-sm font-semibold leading-tight">
+        <h2 className="absolute bottom-3 left-3 right-3 text-white text-md font-semibold leading-tight">
           {title}
         </h2>
       </div>
@@ -56,13 +57,13 @@ const CourseCard = ({
         {/* Progresso */}
         <div className="flex justify-between text-xs mb-1">
           <span className="text-gray-400">Progresso</span>
-          <span className="text-gray-700 font-semibold">{porcCompleted}%</span>
+          <span className="text-gray-500 font-semibold">{porcCompleted}%</span>
         </div>
 
-        <ProgressBar size={porcCompleted} />
+        <ProgressBar size={porcCompleted} className="bg-indigo-400" />
 
         {/* Rodapé */}
-        <div className="flex justify-between text-gray-500 text-xs">
+        <div className="flex justify-between text-gray-500 text-xs mb-2">
           <div className="flex items-center gap-1">
             <BookOpen size={16} />
             <span>
@@ -75,6 +76,7 @@ const CourseCard = ({
             <span>{formatedDuration}</span>
           </div>
         </div>
+        <Button title="Continuar" onClick={() => {}} />
       </div>
     </div>
   );

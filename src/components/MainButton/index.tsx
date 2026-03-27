@@ -3,34 +3,13 @@ import { useState, type ReactNode } from "react";
 type Props = {
   children: ReactNode;
   onClick: () => void;
-  fillIcon: ReactNode;
 };
 
-function MainButton({ children, onClick, fillIcon }: Props) {
-  const [hover, setHover] = useState<boolean>(false);
-
+function MainButton({ children, onClick }: Props) {
   return (
-    <button
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      onClick={onClick}
-      className="text-3xl cursor-pointer relative"
-    >
-      <div className="p-2 relative w-6 h-6">
-        <div
-          className={`absolute inset-0 transition-opacity duration-200 ${
-            hover ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {fillIcon}
-        </div>
-        <div
-          className={`absolute inset-0 transition-opacity duration-200 ${
-            hover ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          {children}
-        </div>
+    <button onClick={onClick} className="text-3xl cursor-pointer">
+      <div className="py-2 px-3 hover:bg-slate-700 transition duration-200 rounded-lg">
+        <div className="flex gap-2 items-center">{children}</div>
       </div>
     </button>
   );
