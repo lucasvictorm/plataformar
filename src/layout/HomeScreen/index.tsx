@@ -6,6 +6,7 @@ import CardsGrid from "../CardsGrid";
 import CoursePill from "../../components/CoursePill";
 import MainButton from "../../components/MainButton";
 import { BookOpen, Folder, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   courses: Course[];
@@ -47,6 +48,8 @@ function getTotalLessons(course: Course): number {
 }
 
 function HomeScreen({ courses }: Props) {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-1 w-full">
       <Sidebar>

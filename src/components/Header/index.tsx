@@ -6,12 +6,11 @@ import MainButton from "../MainButton";
 
 import PlataformarLogo from "../../assets/plataformar.svg";
 import { House, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-type Props = {
-  setScreen: () => void;
-};
+function Header() {
+  const navigate = useNavigate();
 
-function Header({ setScreen }: Props) {
   return (
     <div className="bg-background-main border-b border-b-slate-700 flex justify-between relative h-14">
       <div className="flex gap-3">
@@ -28,7 +27,7 @@ function Header({ setScreen }: Props) {
           </div>
         </div>
         <div className="text-gray-400 flex gap-2 items-center pl-6">
-          <MainButton onClick={setScreen}>
+          <MainButton onClick={() => navigate("/")}>
             <House size={20} />
             <p className="text-base">Início</p>
           </MainButton>

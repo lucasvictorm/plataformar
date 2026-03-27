@@ -1,26 +1,26 @@
 import ContainerScreen from "./layout/ContainerScreen";
 import Header from "./components/Header";
-import CardUpFolder from "./components/CardUpFolder";
 
 import HomeScreen from "./layout/HomeScreen";
 
 import { courses } from "./data/mockCourses";
 import { useState } from "react";
 import MainFullContent from "./layout/MainFullContent";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import StartScreen from "./layout/StartScreen";
+import RootLayout from "./layout/RootLayout";
 
 function App() {
-  const [screen, setScreen] = useState<"start" | "home">("start");
-
   return (
     <ContainerScreen>
-      <Header setScreen={() => setScreen("start")} />
-      {screen === "start" && (
-        <MainFullContent>
-          <CardUpFolder setScreen={() => setScreen("home")} />
-        </MainFullContent>
-      )}
-
-      {screen === "home" && <HomeScreen courses={courses} />}
+      <BrowserRouter>
+        <Routes>
+          <Route element={<RootLayout />}>
+            <Route path="/" element={<StartScreen />} />
+            <Route path="home" element={<HomeScreen courses={courses} />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </ContainerScreen>
   );
 }
