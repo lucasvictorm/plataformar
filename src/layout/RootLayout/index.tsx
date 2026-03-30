@@ -4,11 +4,12 @@ import ContainerScreen from "../ContainerScreen";
 
 function RootLayout() {
   return (
-    <ContainerScreen>
+    <div className="flex flex-col flex-1 min-h-0">
       <Header />
-
-      <Outlet />
-    </ContainerScreen>
+      <div className="flex flex-1 min-h-0">
+        <Outlet />
+      </div>
+    </div>
   );
 }
 
