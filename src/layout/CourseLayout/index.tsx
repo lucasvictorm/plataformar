@@ -92,7 +92,7 @@ function CourseLayout() {
         <div className="flex-1 p-5">
           {/* progresso */}
           <div className="p-4 border-b border-slate-800">
-            <ProgressBar className="" size={progress} />
+            <ProgressBar className="bg-indigo-400" size={progress} />
             <p>
               {completedLessons} de {totalLessons}
             </p>
