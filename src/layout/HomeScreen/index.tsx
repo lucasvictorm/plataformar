@@ -28,7 +28,8 @@ function HomeScreen({ courses }: Props) {
 
           return (
             <CourseCard
-              key={course.name}
+              id={course.id}
+              key={course.id}
               title={course.name}
               duration={duration}
               completedLessons={completedLessons}

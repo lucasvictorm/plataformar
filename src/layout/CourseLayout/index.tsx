@@ -1,39 +1,54 @@
-import { CheckCircle2, FileText, Folder, Play, Plus } from "lucide-react";
-import MainButton from "../../components/MainButton";
-import { courses } from "../../data/mockCourses";
+import { CheckCircle2, FileText, Play } from "lucide-react";
 import {
   formatDuration,
   getPorcCompleted,
   getTotalCompletedLessons,
   getTotalLessons,
 } from "../../utils/course";
-import CoursePill from "../../components/CoursePill";
-import MainContent from "../../components/MainContent";
-import { Outlet, useParams } from "react-router-dom";
-import type { Course, Module } from "../../types/course";
+import { useParams } from "react-router-dom";
 import ProgressBar from "../../ui/ProgressBar";
 import ScrollArea from "../../ui/ScrollArea";
-import { useState } from "react";
-import Button from "../../components/Button";
+import { useEffect, useState } from "react";
 import Sidebar from "../Sidebar";
 import PrimaryActionButton from "../../components/PrimaryActionButton";
 import MainTextarea from "../../ui/MainTextArea";
 import ModuleItem from "../../components/ModuleItem";
+import type { Course } from "../../types/course";
 
 function CourseLayout() {
   const { id } = useParams();
-  const course = courses.find((c) => c.id === Number(id));
+  const [course, setCourse] = useState<Course>();
+
+  async function getCourse() {
+    const course = await window.db.getCourse(Number(id));
+
+    const modules = await window.db.getModules(course.id);
+
+    for (const module of modules) {
+      const lessons = await window.db.getLessons(module.id);
+      module.lessons = lessons;
+    }
+
+    course.modules = modules;
+    return course;
+  }
+
+  useEffect(() => {
+    getCourse().then((data) => {
+      console.log("dados completos:", data);
+      setCourse(data);
+    });
+  }, []);
+
+  const [expandedModules, setExpandedModules] = useState<number[]>([]);
+  const [currentLesson, setCurrentLesson] = useState<number>(0);
 
   if (!course) {
     return <div>Curso não encontrado</div>;
   }
 
-  const [expandedModules, setExpandedModules] = useState<number[]>([]);
-  const [currentLesson, setCurrentLesson] = useState<number>(1);
-  const [courseState, setCourseState] = useState(course);
-
-  let completedLessons = getTotalCompletedLessons(courseState);
-  let totalLessons = getTotalLessons(courseState);
+  let completedLessons = getTotalCompletedLessons(course);
+  let totalLessons = getTotalLessons(course);
   let progress = getPorcCompleted(completedLessons, totalLessons);
 
   function toggleModule(idModule: number) {
@@ -44,7 +59,7 @@ function CourseLayout() {
     );
   }
 
-  const currentLessonData = courseState.modules
+  const currentLessonData = course.modules
     .flatMap((module) =>
       module.lessons.map((lesson) => ({
         ...lesson,
@@ -54,7 +69,7 @@ function CourseLayout() {
     .find((lesson) => lesson.id === currentLesson);
 
   function markLessonAsCompleted(lessonId: number) {
-    setCourseState((prev) => {
+    setCourse((prev) => {
       if (!prev) return prev;
 
       return {
@@ -86,7 +101,7 @@ function CourseLayout() {
           {/* lista de módulos */}
           <ScrollArea className="flex-1">
             <div className="p-3">
-              {courseState.modules.map((module) => (
+              {course.modules.map((module) => (
                 <ModuleItem
                   key={module.id}
                   module={module}
@@ -119,7 +134,7 @@ function CourseLayout() {
                   formatDuration(currentLessonData.duration)}
               </p>
             </div>
-            {!currentLessonData?.done && (
+            {currentLesson != 0 && !currentLessonData?.done && (
               <PrimaryActionButton
                 onClick={() => markLessonAsCompleted(currentLesson)}
               >

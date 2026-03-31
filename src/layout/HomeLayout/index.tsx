@@ -10,6 +10,7 @@ import {
   getTotalCompletedLessons,
   getTotalLessons,
 } from "../../utils/course.ts";
+import { useEffect } from "react";
 
 type Props = {
   courses: Course[];

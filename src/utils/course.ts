@@ -39,7 +39,9 @@ export function getPorcCompleted(completed: number, total: number): number {
   return Math.round((completed / total) * 100);
 }
 
-export function formatDuration(totalMinutes: number) {
+export function formatDuration(totalSeconds: number) {
+  const totalMinutes = Math.floor(totalSeconds / 60);
+
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 

@@ -3,8 +3,10 @@ import Default from "../../assets/default_course.png";
 import ProgressBar from "../../ui/ProgressBar";
 import Button from "../Button";
 import { formatDuration, getPorcCompleted } from "../../utils/course";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
+  id: number;
   title: string;
   duration: number;
   completedLessons: number;
@@ -12,6 +14,7 @@ type Props = {
 };
 
 const CourseCard = ({
+  id,
   title,
   duration,
   completedLessons,
@@ -19,9 +22,9 @@ const CourseCard = ({
 }: Props) => {
   let porcCompleted = getPorcCompleted(completedLessons, totalLessons);
   let formatedDuration = formatDuration(duration);
-
+  const navigate = useNavigate();
   return (
-    <div className="w-65 bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all group rounded-2xl shadow-sm overflow-hidden">
+    <div className="w-65 bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all group rounded-2xl shadow-sm overflow-hidden ">
       {/* Imagem */}
       <div className="relative h-36 bg-black">
         <img
@@ -63,7 +66,7 @@ const CourseCard = ({
             <span>{formatedDuration}</span>
           </div>
         </div>
-        <Button title="Continuar" onClick={() => {}} />
+        <Button title="Continuar" onClick={() => navigate(`/course/${id}`)} />
       </div>
     </div>
   );
