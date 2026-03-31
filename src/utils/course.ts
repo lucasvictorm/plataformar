@@ -38,3 +38,13 @@ export function getTotalLessons(course: Course): number {
 export function getPorcCompleted(completed: number, total: number): number {
   return Math.round((completed / total) * 100);
 }
+
+export function formatDuration(totalMinutes: number) {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours === 0) return `${minutes}min`;
+  if (minutes === 0) return `${hours}h`;
+
+  return `${hours}h ${minutes}min`;
+}

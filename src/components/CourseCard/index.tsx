@@ -2,6 +2,7 @@ import { MoreVertical, BookOpen, Clock } from "lucide-react";
 import Default from "../../assets/default_course.png";
 import ProgressBar from "../../ui/ProgressBar";
 import Button from "../Button";
+import { formatDuration, getPorcCompleted } from "../../utils/course";
 
 type Props = {
   title: string;
@@ -9,20 +10,6 @@ type Props = {
   completedLessons: number;
   totalLessons: number;
 };
-
-function getPorcCompleted(completed: number, total: number): number {
-  return (completed / total) * 100;
-}
-
-function formatDuration(totalMinutes: number) {
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-
-  if (hours === 0) return `${minutes}min`;
-  if (minutes === 0) return `${hours}h`;
-
-  return `${hours}h ${minutes}min`;
-}
 
 const CourseCard = ({
   title,
