@@ -19,6 +19,12 @@ function CourseLayout() {
   const { id } = useParams();
   const [course, setCourse] = useState<Course>();
 
+   async function loadCourse() {
+    const data = await getCourse();
+    setCourse(data);
+  }
+
+
   async function getCourse() {
     const course = await window.db.getCourse(Number(id));
 
@@ -31,6 +37,11 @@ function CourseLayout() {
 
     course.modules = modules;
     return course;
+  }
+
+  async function markLessonAsDone(id: number) {
+    await window.db.markLessonDone(Number(id));
+    loadCourse();
   }
 
   useEffect(() => {
@@ -68,21 +79,6 @@ function CourseLayout() {
     )
     .find((lesson) => lesson.id === currentLesson);
 
-  function markLessonAsCompleted(lessonId: number) {
-    setCourse((prev) => {
-      if (!prev) return prev;
-
-      return {
-        ...prev,
-        modules: prev.modules.map((module) => ({
-          ...module,
-          lessons: module.lessons.map((lesson) =>
-            lesson.id === lessonId ? { ...lesson, done: true } : lesson,
-          ),
-        })),
-      };
-    });
-  }
 
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden text-white">
@@ -136,7 +132,7 @@ function CourseLayout() {
             </div>
             {currentLesson != 0 && !currentLessonData?.done && (
               <PrimaryActionButton
-                onClick={() => markLessonAsCompleted(currentLesson)}
+                onClick={() => markLessonAsDone(currentLesson)}
               >
                 <CheckCircle2 size={16} />
                 Marcar como concluído
@@ -147,7 +143,7 @@ function CourseLayout() {
 
         {/* espaço livre abaixo do vídeo */}
         <div className="flex-1 flex items-center justify-center text-slate-500">
-          Conteúdo adicional (opcional)
+          Conteúdo adicional
         </div>
       </div>
       {/* ANOTAÇÕES */}
