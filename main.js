@@ -2,12 +2,103 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { db } from "./electron/db.js";
-
+import fs from "fs/promises";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // ─── Courses ──────────────────────────────────────────────
 
+// ─── Filesystem ───────────────────────────────────────────
+import { dialog } from "electron";
+
+ipcMain.handle("fs:selectFolder", async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+
+  if (result.canceled) return null;
+
+  return result.filePaths[0];
+});
+
+ipcMain.handle("fs:importCourse", async (_, caminhoCurso) => {
+  try {
+    const nomeCurso = caminhoCurso.split(/[\\/]/).pop();
+
+    // 1. Criar curso
+    const courseResult = db
+      .prepare("INSERT INTO courses (name) VALUES (?)")
+      .run(nomeCurso);
+
+    const courseId = courseResult.lastInsertRowid;
+
+    const itens = await fs.readdir(caminhoCurso, {
+      withFileTypes: true,
+    });
+
+    let moduloGeralId = null;
+
+    for (const item of itens) {
+      const caminhoItem = join(caminhoCurso, item.name);
+
+      // 📁 SE FOR PASTA → módulo normal
+      if (item.isDirectory()) {
+        const moduleResult = db
+          .prepare("INSERT INTO modules (course_id, name) VALUES (?, ?)")
+          .run(courseId, item.name);
+
+        const moduleId = moduleResult.lastInsertRowid;
+
+        const arquivos = await fs.readdir(caminhoItem, {
+          withFileTypes: true,
+        });
+
+        for (const arquivo of arquivos) {
+          if (!arquivo.isFile()) continue;
+
+          db.prepare(
+            "INSERT INTO lessons (module_id, title, duration) VALUES (?, ?, ?)",
+          ).run(moduleId, arquivo.name, null);
+        }
+      }
+
+      // 📄 SE FOR ARQUIVO → módulo "Geral"
+      else if (item.isFile()) {
+        // cria módulo geral só uma vez
+        if (!moduloGeralId) {
+          const moduleResult = db
+            .prepare("INSERT INTO modules (course_id, name) VALUES (?, ?)")
+            .run(courseId, "Geral");
+
+          moduloGeralId = moduleResult.lastInsertRowid;
+        }
+
+        db.prepare(
+          "INSERT INTO lessons (module_id, title, duration) VALUES (?, ?, ?)",
+        ).run(moduloGeralId, item.name, null);
+      }
+    }
+
+    return { success: true };
+  } catch (erro) {
+    console.error("Erro ao importar curso:", erro);
+    return { success: false, error: erro.message };
+  }
+});
+ipcMain.handle("fs:readDir", async (_, caminho) => {
+  try {
+    const itens = await fs.readdir(caminho, { withFileTypes: true });
+
+    return itens.map((item) => ({
+      nome: item.name,
+      tipo: item.isDirectory() ? "pasta" : "arquivo",
+      caminhoCompleto: join(caminho, item.name),
+    }));
+  } catch (erro) {
+    console.error("Erro ao ler pasta:", erro);
+    return [];
+  }
+});
 ipcMain.handle("db:getCourses", () => {
   return db.prepare("SELECT * FROM courses").all();
 });

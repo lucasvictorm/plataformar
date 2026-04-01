@@ -14,9 +14,31 @@ import { useEffect } from "react";
 
 type Props = {
   courses: Course[];
+  reloadCourses: () => Promise<void>;
 };
 
-function HomeLayout({ courses }: Props) {
+function HomeLayout({ courses, reloadCourses }: Props) {
+  async function handleImport() {
+    console.log("sdfsdfs");
+    try {
+      // 1. Abrir seletor de pasta
+      const caminho = await window.fs.selectFolder();
+
+      if (!caminho) return;
+
+      // 2. Importar curso
+      const res = await window.fs.importCourse(caminho);
+
+      if (res.success) {
+        await reloadCourses();
+      } else {
+        alert("Erro ao importar: " + res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro inesperado");
+    }
+  }
   return (
     <div className="flex flex-1 w-full">
       <Sidebar>
@@ -25,7 +47,7 @@ function HomeLayout({ courses }: Props) {
             <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Lista de cursos
             </h3>
-            <MainButton onClick={() => {}}>
+            <MainButton onClick={handleImport}>
               <Plus size={20} color="#90a1b9" />
             </MainButton>
           </div>

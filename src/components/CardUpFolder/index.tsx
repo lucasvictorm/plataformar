@@ -4,6 +4,28 @@ import CardBackground from "../CardBackground";
 import { LuFolderUp } from "react-icons/lu";
 
 function CardUpFolder() {
+  async function handleImport() {
+    try {
+      // 1. Abrir seletor de pasta
+      const caminho = await window.fs.selectFolder();
+
+      if (!caminho) return;
+
+      // 2. Importar curso
+      const res = await window.fs.importCourse(caminho);
+
+      if (res.success) {
+        alert("Curso importado com sucesso!");
+        navigate("/home"); // agora sim faz sentido
+      } else {
+        alert("Erro ao importar: " + res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro inesperado");
+    }
+  }
+
   const navigate = useNavigate();
   return (
     <CardBackground className="w-130 p-4 rounded-md ">
@@ -15,7 +37,7 @@ function CardUpFolder() {
         <p className="text-center">
           Arraste ou importe sua primeira pasta para organizar seu aprendizado
         </p>
-        <Button title="Importar Pasta" onClick={() => navigate("/home")} />
+        <Button title="Importar Pasta" onClick={handleImport} />
       </div>
     </CardBackground>
   );

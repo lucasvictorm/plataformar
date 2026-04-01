@@ -1,4 +1,3 @@
-// electron/preload.cjs
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("db", {
@@ -20,4 +19,10 @@ contextBridge.exposeInMainWorld("db", {
     ipcRenderer.invoke("db:markLessonDone", lessonId),
   markLessonUndone: (lessonId) =>
     ipcRenderer.invoke("db:markLessonUndone", lessonId),
+});
+
+contextBridge.exposeInMainWorld("fs", {
+  readDir: (caminho) => ipcRenderer.invoke("fs:readDir", caminho),
+  importCourse: (caminho) => ipcRenderer.invoke("fs:importCourse", caminho),
+  selectFolder: () => ipcRenderer.invoke("fs:selectFolder"),
 });

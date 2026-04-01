@@ -5,7 +5,7 @@ import HomeScreen from "./layout/HomeScreen";
 
 import { useEffect, useState } from "react";
 import MainFullContent from "./layout/MainFullContent";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import StartScreen from "./layout/StartScreen";
 import RootLayout from "./layout/RootLayout";
 import HomeLayout from "./layout/HomeLayout";
@@ -14,6 +14,11 @@ import type { Course } from "./types/course";
 
 function App() {
   const [courses, setCourses] = useState<Course[]>([]);
+
+  async function loadCourses() {
+    const data = await getFullCourses();
+    setCourses(data);
+  }
 
   async function getFullCourses() {
     const courses = await window.db.getCourses();
@@ -33,6 +38,10 @@ function App() {
   }
 
   useEffect(() => {
+    loadCourses();
+  }, []);
+
+  useEffect(() => {
     getFullCourses().then((data) => {
       console.log("dados completos:", data);
       setCourses(data);
@@ -46,8 +55,22 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<RootLayout />}>
-            <Route path="/" element={<StartScreen />} />
-            <Route path="/home" element={<HomeLayout courses={courses} />}>
+            <Route
+              path="/"
+              element={
+                courses.length === 0 ? (
+                  <StartScreen />
+                ) : (
+                  <Navigate to="/home" replace />
+                )
+              }
+            />
+            <Route
+              path="/home"
+              element={
+                <HomeLayout reloadCourses={loadCourses} courses={courses} />
+              }
+            >
               <Route index element={<HomeScreen courses={courses} />} />
             </Route>
             <Route path="/course/:id" element={<CourseLayout />} />
