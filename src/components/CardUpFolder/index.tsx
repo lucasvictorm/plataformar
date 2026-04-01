@@ -3,20 +3,22 @@ import Button from "../Button";
 import CardBackground from "../CardBackground";
 import { LuFolderUp } from "react-icons/lu";
 
-function CardUpFolder() {
+type Props = {
+  reloadCourses: () => Promise<void>;
+};
+
+function CardUpFolder({ reloadCourses }: Props) {
   async function handleImport() {
     try {
-      // 1. Abrir seletor de pasta
       const caminho = await window.fs.selectFolder();
-
       if (!caminho) return;
 
-      // 2. Importar curso
       const res = await window.fs.importCourse(caminho);
 
       if (res.success) {
-        alert("Curso importado com sucesso!");
-        navigate("/home"); // agora sim faz sentido
+        await reloadCourses(); // 🔥 primeiro atualiza
+
+        navigate("/home"); // depois navega
       } else {
         alert("Erro ao importar: " + res.error);
       }

@@ -3,7 +3,7 @@ import MainContent from "../../components/MainContent";
 import MainButton from "../../components/MainButton";
 import type { Course } from "../../types/course";
 import CoursePill from "../../components/CoursePill";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar";
 
 import {
@@ -18,6 +18,13 @@ type Props = {
 };
 
 function HomeLayout({ courses, reloadCourses }: Props) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (courses.length === 0) {
+      navigate("/", { replace: true });
+    }
+  }, [courses]);
   async function handleImport() {
     console.log("sdfsdfs");
     try {

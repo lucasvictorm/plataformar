@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld("db", {
   getCourses: () => ipcRenderer.invoke("db:getCourses"),
   getCourse: (id) => ipcRenderer.invoke("db:getCourse", id),
   addCourse: (name) => ipcRenderer.invoke("db:addCourse", name),
+  deleteCourse: (id) => ipcRenderer.invoke("db:deleteCourse", id),
 
   // Modules
   getModules: (courseId) => ipcRenderer.invoke("db:getModules", courseId),

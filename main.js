@@ -5,11 +5,26 @@ import { db } from "./electron/db.js";
 import fs from "fs/promises";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// ─── Courses ──────────────────────────────────────────────
-
-// ─── Filesystem ───────────────────────────────────────────
 import { dialog } from "electron";
+
+import ffmpeg from "fluent-ffmpeg";
+import ffprobeStatic from "ffprobe-static";
+ffmpeg.setFfprobePath(ffprobeStatic.path);
+
+function getVideoDuration(caminhoArquivo) {
+  return new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(caminhoArquivo, (err, metadata) => {
+      if (err) return reject(err);
+
+      const duration = metadata.format.duration; // duração em segundos
+      resolve(duration || 0);
+    });
+  });
+}
+
+ipcMain.handle("db:deleteCourse", (_, id) => {
+  return db.prepare("DELETE FROM courses WHERE id = ?").run(id);
+});
 
 ipcMain.handle("fs:selectFolder", async () => {
   const result = await dialog.showOpenDialog({
@@ -29,12 +44,9 @@ ipcMain.handle("fs:importCourse", async (_, caminhoCurso) => {
     const courseResult = db
       .prepare("INSERT INTO courses (name) VALUES (?)")
       .run(nomeCurso);
-
     const courseId = courseResult.lastInsertRowid;
 
-    const itens = await fs.readdir(caminhoCurso, {
-      withFileTypes: true,
-    });
+    const itens = await fs.readdir(caminhoCurso, { withFileTypes: true });
 
     let moduloGeralId = null;
 
@@ -46,19 +58,28 @@ ipcMain.handle("fs:importCourse", async (_, caminhoCurso) => {
         const moduleResult = db
           .prepare("INSERT INTO modules (course_id, name) VALUES (?, ?)")
           .run(courseId, item.name);
-
         const moduleId = moduleResult.lastInsertRowid;
 
-        const arquivos = await fs.readdir(caminhoItem, {
-          withFileTypes: true,
-        });
+        const arquivos = await fs.readdir(caminhoItem, { withFileTypes: true });
 
         for (const arquivo of arquivos) {
           if (!arquivo.isFile()) continue;
 
+          const caminhoArquivo = join(caminhoItem, arquivo.name);
+          let duracao = 0;
+
+          try {
+            duracao = await getVideoDuration(caminhoArquivo);
+          } catch (e) {
+            console.warn(
+              "Não foi possível ler a duração do vídeo:",
+              arquivo.name,
+            );
+          }
+
           db.prepare(
             "INSERT INTO lessons (module_id, title, duration) VALUES (?, ?, ?)",
-          ).run(moduleId, arquivo.name, null);
+          ).run(moduleId, arquivo.name, duracao);
         }
       }
 
@@ -69,13 +90,21 @@ ipcMain.handle("fs:importCourse", async (_, caminhoCurso) => {
           const moduleResult = db
             .prepare("INSERT INTO modules (course_id, name) VALUES (?, ?)")
             .run(courseId, "Geral");
-
           moduloGeralId = moduleResult.lastInsertRowid;
+        }
+
+        const caminhoArquivo = join(caminhoCurso, item.name);
+        let duracao = 0;
+
+        try {
+          duracao = await getVideoDuration(caminhoArquivo);
+        } catch (e) {
+          console.warn("Não foi possível ler a duração do vídeo:", item.name);
         }
 
         db.prepare(
           "INSERT INTO lessons (module_id, title, duration) VALUES (?, ?, ?)",
-        ).run(moduloGeralId, item.name, null);
+        ).run(moduloGeralId, item.name, duracao);
       }
     }
 

@@ -8,6 +8,7 @@ declare global {
       getCourses: () => Promise<Course[]>;
       getCourse: (id: number) => Promise<Course>;
       addCourse: (name: string) => Promise<void>;
+      deleteCourse: (id: number) => Promise<Course>;
 
       getModules: (courseId: number) => Promise<Module[]>;
       addModule: (courseId: number, name: string) => Promise<void>;

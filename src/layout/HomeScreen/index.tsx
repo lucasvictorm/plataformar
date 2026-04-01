@@ -11,11 +11,10 @@ import {
 
 type Props = {
   courses: Course[];
+  reloadCourses: () => Promise<void>;
 };
 
-function HomeScreen({ courses }: Props) {
-  const navigate = useNavigate();
-
+function HomeScreen({ courses, reloadCourses }: Props) {
   return (
     <>
       <h1 className="text-white p-5 text-3xl font-bold">Seus cursos</h1>
@@ -34,6 +33,7 @@ function HomeScreen({ courses }: Props) {
               duration={duration}
               completedLessons={completedLessons}
               totalLessons={totalLessons}
+              onDelete={reloadCourses}
             />
           );
         })}

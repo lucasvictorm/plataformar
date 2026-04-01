@@ -59,7 +59,7 @@ function App() {
               path="/"
               element={
                 courses.length === 0 ? (
-                  <StartScreen />
+                  <StartScreen reloadCourses={loadCourses} />
                 ) : (
                   <Navigate to="/home" replace />
                 )
@@ -71,7 +71,12 @@ function App() {
                 <HomeLayout reloadCourses={loadCourses} courses={courses} />
               }
             >
-              <Route index element={<HomeScreen courses={courses} />} />
+              <Route
+                index
+                element={
+                  <HomeScreen reloadCourses={loadCourses} courses={courses} />
+                }
+              />
             </Route>
             <Route path="/course/:id" element={<CourseLayout />} />
           </Route>
