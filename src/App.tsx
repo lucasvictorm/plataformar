@@ -1,10 +1,10 @@
 import ContainerScreen from "./layout/ContainerScreen";
-import Header from "./components/Header";
+
 
 import HomeScreen from "./layout/HomeScreen";
 
 import { useEffect, useState } from "react";
-import MainFullContent from "./layout/MainFullContent";
+
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import StartScreen from "./layout/StartScreen";
 import RootLayout from "./layout/RootLayout";

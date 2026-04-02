@@ -3,12 +3,19 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { db } from "./electron/db.js";
 import fs from "fs/promises";
+import { createReadStream, statSync } from "fs";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import { dialog } from "electron";
 
+import { protocol, net } from "electron";
+
+import { pathToFileURL } from "url";
+
 import ffmpeg from "fluent-ffmpeg";
 import ffprobeStatic from "ffprobe-static";
+
 ffmpeg.setFfprobePath(ffprobeStatic.path);
 
 function getVideoDuration(caminhoArquivo) {
@@ -78,8 +85,8 @@ ipcMain.handle("fs:importCourse", async (_, caminhoCurso) => {
           }
 
           db.prepare(
-            "INSERT INTO lessons (module_id, title, duration) VALUES (?, ?, ?)",
-          ).run(moduleId, arquivo.name, duracao);
+            "INSERT INTO lessons (module_id, title, duration, video_path) VALUES (?, ?, ?, ?)",
+          ).run(moduleId, arquivo.name, duracao, caminhoArquivo);
         }
       }
 
@@ -103,8 +110,8 @@ ipcMain.handle("fs:importCourse", async (_, caminhoCurso) => {
         }
 
         db.prepare(
-          "INSERT INTO lessons (module_id, title, duration) VALUES (?, ?, ?)",
-        ).run(moduloGeralId, item.name, duracao);
+          "INSERT INTO lessons (module_id, title, duration, video_path) VALUES (?, ?, ?, ?)",
+        ).run(moduloGeralId, item.name, duracao, caminhoArquivo);
       }
     }
 
@@ -187,6 +194,7 @@ function createWindow() {
       preload: join(__dirname, "/electron/preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
+      webSecurity: false,
     },
   });
 
@@ -197,5 +205,13 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(createWindow);
+ipcMain.handle("video:getPath", (_, videoPath) => {
+  return pathToFileURL(videoPath).href;
+});
+
+app.whenReady().then(() => {
+  
+
+  createWindow();
+});
 app.on("window-all-closed", () => app.quit());

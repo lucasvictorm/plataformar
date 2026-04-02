@@ -27,3 +27,7 @@ contextBridge.exposeInMainWorld("fs", {
   importCourse: (caminho) => ipcRenderer.invoke("fs:importCourse", caminho),
   selectFolder: () => ipcRenderer.invoke("fs:selectFolder"),
 });
+
+contextBridge.exposeInMainWorld("video", {
+  getPath: (path) => ipcRenderer.invoke("video:getPath", path),
+});

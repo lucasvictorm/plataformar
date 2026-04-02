@@ -3,6 +3,7 @@ export type Lesson = {
   title: string;
   duration?: number;
   done: boolean;
+  video_path?: string;
 };
 
 export type Module = {

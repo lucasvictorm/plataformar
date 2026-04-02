@@ -16,26 +16,33 @@ export const db = new Database(dbPath);
 db.pragma("journal_mode = WAL");
 
 db.exec(`
-  CREATE TABLE IF NOT EXISTS courses (
+  PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS courses (
     id   INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL
-  );
+);
 
-  CREATE TABLE IF NOT EXISTS modules (
+CREATE TABLE IF NOT EXISTS modules (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     course_id INTEGER NOT NULL,
     name      TEXT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES courses(id)
-  );
+    FOREIGN KEY (course_id) 
+        REFERENCES courses(id) 
+        ON DELETE CASCADE
+);
 
-  CREATE TABLE IF NOT EXISTS lessons (
+CREATE TABLE IF NOT EXISTS lessons (
     id        INTEGER PRIMARY KEY AUTOINCREMENT,
     module_id INTEGER NOT NULL,
     title     TEXT NOT NULL,
     duration  INTEGER,
-    done      INTEGER DEFAULT 0,
-    FOREIGN KEY (module_id) REFERENCES modules(id)
-  );
+    done      INTEGER DEFAULT 0, 
+    video_path TEXT,
+    FOREIGN KEY (module_id) 
+        REFERENCES modules(id) 
+        ON DELETE CASCADE
+)
 `);
 
 console.log("Banco iniciado em:", dbPath);

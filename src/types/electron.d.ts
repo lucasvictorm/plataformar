@@ -32,6 +32,10 @@ declare global {
       }>;
       selectFolder: () => Promise<string | null>;
     };
+
+    video: {
+      getPath: (path: string) => Promise<string>;
+    };
   }
 }
 

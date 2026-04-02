@@ -5,12 +5,14 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
+    "postinstall": "electron-rebuild",
     "dev": "vite",
     "electron": "cross-env NODE_ENV=development electron .",
     "start": "concurrently \"npm run dev\" \"npm run electron\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:electron": "npm run build && electron-builder"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
@@ -33,6 +35,7 @@
     "concurrently": "^9.2.1",
     "cross-env": "^10.1.0",
     "electron": "^41.1.0",
+    "electron-builder": "^26.8.1",
     "electron-rebuild": "^3.2.9",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -42,5 +45,29 @@
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.1",
     "wait-on": "^9.0.4"
+  },
+  "build": {
+    "appId": "com.seunome.plataformar",
+    "productName": "PlataformaR",
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist_electron"
+    },
+    "files": [
+      "dist/**",
+      "electron/**",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": "dmg"
+    }
   }
 }

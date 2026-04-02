@@ -14,16 +14,34 @@ import PrimaryActionButton from "../../components/PrimaryActionButton";
 import MainTextarea from "../../ui/MainTextArea";
 import ModuleItem from "../../components/ModuleItem";
 import type { Course } from "../../types/course";
+import { useRef } from "react";
 
 function CourseLayout() {
   const { id } = useParams();
   const [course, setCourse] = useState<Course>();
+  const [expandedModules, setExpandedModules] = useState<number[]>([]);
+  const [currentLesson, setCurrentLesson] = useState<number>(0);
+  const [videoSrc, setVideoSrc] = useState("");
 
-   async function loadCourse() {
+  const isFirstLoad = useRef(true);
+
+  async function loadCourse() {
     const data = await getCourse();
     setCourse(data);
-  }
 
+    if (isFirstLoad.current) {
+      const firstLesson = getFirstUnfinishedLesson(data);
+      setCurrentLesson(firstLesson);
+
+      const moduleId = getModuleIdByLesson(data, firstLesson);
+
+      if (moduleId) {
+        setExpandedModules([moduleId]);
+      }
+
+      isFirstLoad.current = false; // 🔥 aqui é a chave
+    }
+  }
 
   async function getCourse() {
     const course = await window.db.getCourse(Number(id));
@@ -39,20 +57,66 @@ function CourseLayout() {
     return course;
   }
 
+  function getFirstUnfinishedLesson(course: Course): number {
+    for (const module of course.modules) {
+      for (const lesson of module.lessons) {
+        if (!lesson.done) {
+          return lesson.id;
+        }
+      }
+    }
+
+    return course.modules[0]?.lessons[0]?.id || 0;
+  }
+
+  function getModuleIdByLesson(
+    course: Course,
+    lessonId: number,
+  ): number | null {
+    for (const module of course.modules) {
+      if (module.lessons.some((lesson) => lesson.id === lessonId)) {
+        return module.id;
+      }
+    }
+    return null;
+  }
+
   async function markLessonAsDone(id: number) {
     await window.db.markLessonDone(Number(id));
     loadCourse();
   }
 
+  const currentLessonData = course?.modules
+    .flatMap((module) =>
+      module.lessons.map((lesson) => ({
+        ...lesson,
+        moduleName: module.name,
+      })),
+    )
+    .find((lesson) => lesson.id === currentLesson);
+
   useEffect(() => {
-    getCourse().then((data) => {
-      console.log("dados completos:", data);
-      setCourse(data);
-    });
+    loadCourse();
   }, []);
 
-  const [expandedModules, setExpandedModules] = useState<number[]>([]);
-  const [currentLesson, setCurrentLesson] = useState<number>(0);
+  useEffect(() => {
+    async function loadVideo() {
+      if (!currentLessonData?.video_path) {
+        setVideoSrc(""); // 🔥 limpa vídeo antigo
+        return;
+      }
+
+      const path = await window.video.getPath(currentLessonData.video_path);
+
+      setVideoSrc(path);
+    }
+
+    loadVideo();
+  }, [currentLessonData]);
+
+  useEffect(() => {
+    console.log("src atualizado:", videoSrc);
+  }, [videoSrc]);
 
   if (!course) {
     return <div>Curso não encontrado</div>;
@@ -69,16 +133,6 @@ function CourseLayout() {
         : [...prev, idModule],
     );
   }
-
-  const currentLessonData = course.modules
-    .flatMap((module) =>
-      module.lessons.map((lesson) => ({
-        ...lesson,
-        moduleName: module.name,
-      })),
-    )
-    .find((lesson) => lesson.id === currentLesson);
-
 
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden text-white">
@@ -112,11 +166,20 @@ function CourseLayout() {
         </div>
       </Sidebar>
       <div className="flex-1 flex flex-col min-h-0 min-w-0 bg-slate-950">
-        {/* vídeo */}
-        <div className="bg-black aspect-video  flex items-center justify-center shrink-0">
-          <Play size={48} />
+        <div className="bg-black aspect-video w-full flex items-center justify-center shrink-0 overflow-hidden relative">
+          {videoSrc ? (
+            <video
+              key={videoSrc}
+              controls
+              className="w-full h-full object-contain" // 🔥 object-contain é o segredo
+            >
+              <source src={videoSrc} type="video/mp4" />
+              Seu navegador não suporta vídeo.
+            </video>
+          ) : (
+            <Play size={48} className="text-slate-700" />
+          )}
         </div>
-
         {/* info */}
         <div className="bg-slate-900 border-b border-slate-800 p-4 shrink-0">
           <div className="flex items-start justify-between">

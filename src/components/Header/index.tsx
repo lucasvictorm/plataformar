@@ -1,4 +1,3 @@
-import { IoSettings, IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineClose, MdOutlineSquare } from "react-icons/md";
 import ActionButton from "../ActionButton";
 import { FiMinus } from "react-icons/fi";

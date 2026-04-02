@@ -1,7 +1,7 @@
 import CourseCard from "../../components/CourseCard";
 import type { Course } from "../../types/course";
 import CardsGrid from "../CardsGrid";
-import { useNavigate } from "react-router-dom";
+
 
 import {
   sumTotalTimeCourse,
