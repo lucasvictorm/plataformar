@@ -193,10 +193,6 @@ ipcMain.on("window-maximize", (event) => {
   win.isMaximized() ? win.unmaximize() : win.maximize();
 });
 
-ipcMain.on("window-close", (event) => {
-  BrowserWindow.fromWebContents(event.sender).close();
-});
-
 // ─── Janela ───────────────────────────────────────────────
 
 function createWindow() {
@@ -210,6 +206,24 @@ function createWindow() {
       nodeIntegration: false,
       webSecurity: false,
     },
+  });
+
+  win.maximize();
+
+  win.on("maximize", () => {
+    win.webContents.send("window-is-maximized", true);
+  });
+
+  win.on("unmaximize", () => {
+    win.webContents.send("window-is-maximized", false);
+  });
+
+  ipcMain.on("window-close", (event) => {
+    BrowserWindow.fromWebContents(event.sender).close();
+  });
+
+  win.webContents.once("did-finish-load", () => {
+    win.webContents.send("window-is-maximized", win.isMaximized());
   });
 
   if (process.env.NODE_ENV === "development") {

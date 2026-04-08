@@ -22,10 +22,13 @@ function CourseLayout() {
   const [expandedModules, setExpandedModules] = useState<number[]>([]);
   const [currentLesson, setCurrentLesson] = useState<number>(0);
   const [videoSrc, setVideoSrc] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const isFirstLoad = useRef(true);
 
   async function loadCourse() {
+    setLoading(true);
+
     const data = await getCourse();
     setCourse(data);
 
@@ -39,8 +42,46 @@ function CourseLayout() {
         setExpandedModules([moduleId]);
       }
 
-      isFirstLoad.current = false; // 🔥 aqui é a chave
+      isFirstLoad.current = false;
     }
+
+    setLoading(false);
+  }
+
+  async function markLessonAsDone(id: number) {
+    await window.db.markLessonDone(id);
+
+    setCourse((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        modules: prev.modules.map((m) => ({
+          ...m,
+          lessons: m.lessons.map((l) =>
+            l.id === id ? { ...l, done: true } : l,
+          ),
+        })),
+      };
+    });
+  }
+
+  async function markLessonAsUndone(id: number) {
+    await window.db.markLessonUndone(id);
+
+    setCourse((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        modules: prev.modules.map((m) => ({
+          ...m,
+          lessons: m.lessons.map((l) =>
+            l.id === id ? { ...l, done: false } : l,
+          ),
+        })),
+      };
+    });
   }
 
   async function getCourse() {
@@ -81,11 +122,6 @@ function CourseLayout() {
     return null;
   }
 
-  async function markLessonAsDone(id: number) {
-    await window.db.markLessonDone(Number(id));
-    loadCourse();
-  }
-
   const currentLessonData = course?.modules
     .flatMap((module) =>
       module.lessons.map((lesson) => ({
@@ -102,7 +138,7 @@ function CourseLayout() {
   useEffect(() => {
     async function loadVideo() {
       if (!currentLessonData?.video_path) {
-        setVideoSrc(""); // 🔥 limpa vídeo antigo
+        setVideoSrc("");
         return;
       }
 
@@ -117,6 +153,19 @@ function CourseLayout() {
   useEffect(() => {
     console.log("src atualizado:", videoSrc);
   }, [videoSrc]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-background-secondary">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-slate-600 border-t-transparent rounded-full animate-spin"></div>
+
+          {/* Texto */}
+          <p className="text-slate-400 text-sm">Carregando curso...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!course) {
     return <div>Curso não encontrado</div>;
@@ -193,14 +242,21 @@ function CourseLayout() {
                   formatDuration(currentLessonData.duration)}
               </p>
             </div>
-            {currentLesson != 0 && !currentLessonData?.done && (
-              <PrimaryActionButton
-                onClick={() => markLessonAsDone(currentLesson)}
-              >
-                <CheckCircle2 size={16} />
-                Marcar como concluído
-              </PrimaryActionButton>
-            )}
+            <PrimaryActionButton
+              onClick={() =>
+                currentLessonData?.done
+                  ? markLessonAsUndone(currentLesson)
+                  : markLessonAsDone(currentLesson)
+              }
+              className={
+                currentLessonData?.done
+                  ? "bg-transparent border border-green-500 text-green-500 hover:bg-green-500/10"
+                  : ""
+              }
+            >
+              <CheckCircle2 size={16} />
+              {currentLessonData?.done ? "Concluído" : "Marcar como concluído"}
+            </PrimaryActionButton>
           </div>
         </div>
 

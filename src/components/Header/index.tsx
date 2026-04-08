@@ -6,9 +6,16 @@ import MainButton from "../MainButton";
 import PlataformarLogo from "../../assets/plataformar.svg";
 import { House, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { LuSquare } from "react-icons/lu";
 
 function Header() {
   const navigate = useNavigate();
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  useEffect(() => {
+    window.electronAPI.onMaximizeChange(setIsMaximized);
+  }, []);
 
   return (
     <div className="bg-background-main border-b border-b-slate-700 flex justify-between relative h-14 drag">
@@ -42,7 +49,7 @@ function Header() {
           <FiMinus />
         </ActionButton>
         <ActionButton onClick={window.electronAPI.maximize}>
-          <MdOutlineSquare />
+          {isMaximized ? <LuSquare /> : <MdOutlineSquare />}
         </ActionButton>
         <ActionButton onClick={window.electronAPI.close}>
           <MdOutlineClose />

@@ -22,10 +22,9 @@ function ModuleItem({
 
   return (
     <div className="mb-2">
-      {/* Header do módulo */}
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition-colors text-left"
+        className="cursor-pointer w-full flex items-center justify-between p-3 rounded-lg hover:bg-slate-800 transition-colors text-left"
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {isExpanded ? (
@@ -45,7 +44,6 @@ function ModuleItem({
         </div>
       </button>
 
-      {/* Aulas */}
       {isExpanded && (
         <div className="ml-2 mt-1 space-y-1">
           {module.lessons.map((lesson) => (

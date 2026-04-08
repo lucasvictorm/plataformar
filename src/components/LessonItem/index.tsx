@@ -12,16 +12,16 @@ function LessonItem({ lesson, isActive, onClick }: Props) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 p-2.5 rounded-lg transition-colors text-left ${
+      className={`cursor-pointer w-full flex items-center gap-3 p-2.5 rounded-lg transition-colors text-left ${
         isActive
           ? "bg-blue-600/20 border border-blue-500/50"
           : "hover:bg-slate-800 border border-transparent"
       }`}
     >
       {lesson.done ? (
-        <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+        <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
       ) : (
-        <Circle className="h-4 w-4 text-slate-600 flex-shrink-0" />
+        <Circle className="h-4 w-4 text-slate-600 shrink-0" />
       )}
 
       <div className="flex-1 min-w-0">
