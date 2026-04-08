@@ -184,12 +184,26 @@ ipcMain.handle("db:markLessonUndone", (_, lessonId) => {
   return db.prepare("UPDATE lessons SET done = 0 WHERE id = ?").run(lessonId);
 });
 
+ipcMain.on("window-minimize", (event) => {
+  BrowserWindow.fromWebContents(event.sender).minimize();
+});
+
+ipcMain.on("window-maximize", (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  win.isMaximized() ? win.unmaximize() : win.maximize();
+});
+
+ipcMain.on("window-close", (event) => {
+  BrowserWindow.fromWebContents(event.sender).close();
+});
+
 // ─── Janela ───────────────────────────────────────────────
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
+    frame: false,
     webPreferences: {
       preload: join(__dirname, "/electron/preload.cjs"),
       contextIsolation: true,
@@ -210,8 +224,6 @@ ipcMain.handle("video:getPath", (_, videoPath) => {
 });
 
 app.whenReady().then(() => {
-  
-
   createWindow();
 });
 app.on("window-all-closed", () => app.quit());

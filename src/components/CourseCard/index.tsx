@@ -41,7 +41,6 @@ const CourseCard = ({
 
   return (
     <div className="w-65 bg-slate-800 border border-slate-700 hover:border-slate-600 transition-all group rounded-2xl shadow-sm overflow-hidden">
-      {/* Imagem */}
       <div className="relative h-36 bg-black">
         <img
           src={Default}
@@ -49,7 +48,6 @@ const CourseCard = ({
           className="w-full h-full object-cover opacity-80"
         />
 
-        {/* Botão menu */}
         <button
           onClick={() => setOpenMenu(!openMenu)}
           className="absolute top-2 right-2 bg-white/90 hover:bg-white p-1 rounded-full"
@@ -57,7 +55,6 @@ const CourseCard = ({
           <MoreVertical size={16} className="text-gray-700" />
         </button>
 
-        {/* Dropdown */}
         {openMenu && (
           <div className="absolute top-10 right-2 bg-slate-900 border border-slate-700 rounded-md shadow-lg z-10">
             <button
@@ -74,7 +71,6 @@ const CourseCard = ({
         </h2>
       </div>
 
-      {/* Conteúdo */}
       <div className="p-4">
         <div className="flex justify-between text-xs mb-1">
           <span className="text-gray-400">Progresso</span>

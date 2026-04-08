@@ -36,6 +36,12 @@ declare global {
     video: {
       getPath: (path: string) => Promise<string>;
     };
+
+    electronAPI: {
+      minimize: () => void;
+      maximize: () => void;
+      close: () => void;
+    };
   }
 }
 

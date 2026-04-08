@@ -11,7 +11,7 @@ function Header() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-background-main border-b border-b-slate-700 flex justify-between relative h-14">
+    <div className="bg-background-main border-b border-b-slate-700 flex justify-between relative h-14 drag">
       <div className="flex gap-3">
         <div className="pl-5">
           <div className="flex h-full justify-center items-center">
@@ -25,7 +25,7 @@ function Header() {
             </h1>
           </div>
         </div>
-        <div className="text-gray-400 flex gap-2 items-center pl-6">
+        <div className="text-gray-400 flex gap-2 items-center pl-6 no-drag">
           <MainButton onClick={() => navigate("/")}>
             <House size={20} />
             <p className="text-base">Início</p>
@@ -37,14 +37,14 @@ function Header() {
         </div>
       </div>
 
-      <div className="text-text-main flex items-center">
-        <ActionButton>
+      <div className="text-text-main flex items-center no-drag">
+        <ActionButton onClick={window.electronAPI.minimize}>
           <FiMinus />
         </ActionButton>
-        <ActionButton>
+        <ActionButton onClick={window.electronAPI.maximize}>
           <MdOutlineSquare />
         </ActionButton>
-        <ActionButton>
+        <ActionButton onClick={window.electronAPI.close}>
           <MdOutlineClose />
         </ActionButton>
       </div>
