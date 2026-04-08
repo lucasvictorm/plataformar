@@ -93,7 +93,14 @@ const CourseCard = ({
           </div>
         </div>
 
-        <Button title="Continuar" onClick={() => navigate(`/course/${id}`)} />
+        <Button
+          title="Continuar"
+          onClick={() => {
+            navigate(`/course/${id}`, {
+              state: { courseName: title },
+            });
+          }}
+        />
       </div>
     </div>
   );

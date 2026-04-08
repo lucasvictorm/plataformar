@@ -41,7 +41,9 @@ declare global {
       minimize: () => void;
       maximize: () => void;
       close: () => void;
-      onMaximizeChange: (callback: (isMaximized: boolean) => void) => void;
+      onMaximizeChange: (
+        callback: (isMaximized: boolean) => void,
+      ) => () => void;
     };
   }
 }

@@ -5,6 +5,7 @@ import type { Course } from "../../types/course";
 import CoursePill from "../../components/CoursePill";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar";
+import { useLocation } from "react-router-dom";
 
 import {
   getTotalCompletedLessons,
@@ -19,6 +20,14 @@ type Props = {
 
 function HomeLayout({ courses, reloadCourses }: Props) {
   const navigate = useNavigate();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/home") {
+      reloadCourses();
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (courses.length === 0) {
@@ -46,6 +55,18 @@ function HomeLayout({ courses, reloadCourses }: Props) {
       alert("Erro inesperado");
     }
   }
+
+  const totalCourses = courses.length;
+
+  const totalCompleted = courses.reduce(
+    (acc, course) => acc + getTotalCompletedLessons(course),
+    0,
+  );
+
+  const totalLessons = courses.reduce(
+    (acc, course) => acc + getTotalLessons(course),
+    0,
+  );
   return (
     <div className="flex flex-1 w-full">
       <Sidebar>
@@ -79,14 +100,16 @@ function HomeLayout({ courses, reloadCourses }: Props) {
               <Folder className="h-3.5 w-3.5" />
               <span>Total de cursos</span>
             </div>
-            <span className="font-semibold text-blue-400">4</span>
+            <span className="font-semibold text-blue-400">{totalCourses}</span>
           </div>
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-1.5 text-slate-400">
               <BookOpen className="h-3.5 w-3.5" />
               <span>Aulas completas</span>
             </div>
-            <span className="font-semibold text-blue-400">16/36</span>
+            <span className="font-semibold text-blue-400">
+              {totalCompleted}/{totalLessons}
+            </span>
           </div>
         </div>
       </Sidebar>
