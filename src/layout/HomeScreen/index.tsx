@@ -2,7 +2,6 @@ import CourseCard from "../../components/CourseCard";
 import type { Course } from "../../types/course";
 import CardsGrid from "../CardsGrid";
 
-
 import {
   sumTotalTimeCourse,
   getTotalCompletedLessons,
@@ -15,6 +14,7 @@ type Props = {
 };
 
 function HomeScreen({ courses, reloadCourses }: Props) {
+  console.log(courses);
   return (
     <>
       <h1 className="text-white p-5 text-3xl font-bold">Seus cursos</h1>

@@ -8,7 +8,7 @@ import { FiMinus } from "react-icons/fi";
 import MainButton from "../MainButton";
 
 import PlataformarLogo from "../../assets/plataformar.svg";
-import { ArrowLeft, BookOpen, House, Settings } from "lucide-react";
+import { ArrowLeft, BookOpen, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -30,9 +30,7 @@ function Header() {
       unsubscribe();
     };
   }, []);
-  {
-    console.log(isMaximized + "asda");
-  }
+
   return (
     <div className="bg-background-main border-b border-b-slate-700 flex justify-between relative h-14 drag">
       <div className="flex gap-3 items-center">
@@ -74,7 +72,7 @@ function Header() {
                 <p className="text-base">Início</p>
               </MainButton>*/}
 
-              <MainButton onClick={() => console.log("Config")}>
+              <MainButton onClick={() => {}}>
                 <Settings size={20} />
                 <p className="text-base">Configurações</p>
               </MainButton>

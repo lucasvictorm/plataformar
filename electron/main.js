@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { db } from "./electron/db.js";
+import { db } from "./db.js";
 import fs from "fs/promises";
 import { createReadStream, statSync } from "fs";
 
@@ -16,14 +16,27 @@ import { pathToFileURL } from "url";
 import ffmpeg from "fluent-ffmpeg";
 import ffprobeStatic from "ffprobe-static";
 
-ffmpeg.setFfprobePath(ffprobeStatic.path);
+import path from "path";
+
+import fsSync from "fs";
+
+let ffprobePath = ffprobeStatic.path;
+
+if (app.isPackaged) {
+  ffprobePath = ffprobeStatic.path.replace("app.asar", "app.asar.unpacked");
+}
+
+ffmpeg.setFfprobePath(ffprobePath);
 
 function getVideoDuration(caminhoArquivo) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     ffmpeg.ffprobe(caminhoArquivo, (err, metadata) => {
-      if (err) return reject(err);
+      if (err) {
+        console.error("Erro ao ler duração do vídeo:", err);
+        return resolve(0);
+      }
 
-      const duration = metadata.format.duration; // duração em segundos
+      const duration = metadata?.format?.duration;
       resolve(duration || 0);
     });
   });
@@ -101,6 +114,7 @@ ipcMain.handle("fs:importCourse", async (_, caminhoCurso) => {
         }
 
         const caminhoArquivo = join(caminhoCurso, item.name);
+
         let duracao = 0;
 
         try {
@@ -201,7 +215,7 @@ function createWindow() {
     height: 800,
     frame: false,
     webPreferences: {
-      preload: join(__dirname, "/electron/preload.cjs"),
+      preload: join(__dirname, "/preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
       webSecurity: false,

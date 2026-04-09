@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "main.js",
+  "main": "electron/main.js",
   "scripts": {
     "postinstall": "electron-rebuild",
     "dev": "vite",
@@ -47,8 +47,8 @@
     "wait-on": "^9.0.4"
   },
   "build": {
-    "appId": "com.seunome.plataformar",
-    "productName": "PlataformaR",
+    "appId": "com.lucas.plataformar",
+    "productName": "Plataformar",
     "directories": {
       "buildResources": "assets",
       "output": "dist_electron"
@@ -56,7 +56,11 @@
     "files": [
       "dist/**",
       "electron/**",
+      "node_modules/ffprobe-static/**",
       "package.json"
+    ],
+    "asarUnpack": [
+      "**/ffprobe-static/**"
     ],
     "win": {
       "target": "nsis"

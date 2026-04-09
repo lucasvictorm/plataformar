@@ -35,7 +35,6 @@ function HomeLayout({ courses, reloadCourses }: Props) {
     }
   }, [courses]);
   async function handleImport() {
-    console.log("sdfsdfs");
     try {
       // 1. Abrir seletor de pasta
       const caminho = await window.fs.selectFolder();

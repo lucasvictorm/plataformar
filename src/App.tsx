@@ -1,11 +1,10 @@
 import ContainerScreen from "./layout/ContainerScreen";
 
-
 import HomeScreen from "./layout/HomeScreen";
 
 import { useEffect, useState } from "react";
-
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import StartScreen from "./layout/StartScreen";
 import RootLayout from "./layout/RootLayout";
 import HomeLayout from "./layout/HomeLayout";
@@ -43,16 +42,13 @@ function App() {
 
   useEffect(() => {
     getFullCourses().then((data) => {
-      console.log("dados completos:", data);
       setCourses(data);
     });
   }, []);
 
-  console.log(courses);
-
   return (
     <ContainerScreen>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route element={<RootLayout />}>
             <Route
@@ -81,7 +77,7 @@ function App() {
             <Route path="/course/:id" element={<CourseLayout />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </ContainerScreen>
   );
 }
